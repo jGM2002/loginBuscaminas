@@ -32,10 +32,12 @@ def abrirImagen():
 
 
 # Función para seleccionar un avatar
-def seleccionarAvatar(nick):
+def seleccionarAvatar(nick, ventana):
     filaPath = filedialog.askopenfilename()
     if filaPath:
         nuevoAvatar.set(filaPath)
+        messagebox.showinfo("Éxito", "Avatar de "+nick+" se selecciono correctamente.")
+        ventana.deiconify()
 
 
 # Función para cargar el avatar de un usuario
@@ -127,23 +129,30 @@ def abrirSubfinestraModificar(nick):
 def abrirImagenMod(nick):
     filePath = filedialog.askopenfilename()
     if filePath:
-        cur.execute("UPDATE usuarios SET avatar=? WHERE nick=?", (filePath, nick))
+        cur.execute("UPDATE usuarios SET avatar=? WHERE nick=? AND avatar IS NOT NULL", (filePath, nick))
         conn.commit()
         cargarAvatar(nick)
+        messagebox.showinfo("Éxito", "Avatar modificado correctamente.")
 
 
 # Función para actualizar el nick de un usuario
 def actualizarNick(nickViejo, nickNuevo):
-    cur.execute("UPDATE usuarios SET nick=? WHERE nick=?", (nickNuevo, nickViejo))
-    conn.commit()
-    messagebox.showinfo("Éxito", f"Nick actualizado a: {nickNuevo}")
+    if not nickNuevo:
+        messagebox.showerror("Error", "El nuevo nick no puede estar vacío.")
+    else:
+        cur.execute("UPDATE usuarios SET nick=? WHERE nick=?", (nickNuevo, nickViejo))
+        conn.commit()
+        messagebox.showinfo("Éxito", f"Nick actualizado a: {nickNuevo}")
 
 
 # Función para actualizar la contraseña de un usuario
 def actualizarContrasenya(nick, contrasenyaNueva):
-    cur.execute("UPDATE usuarios SET contrasenya=? WHERE nick=?", (contrasenyaNueva, nick))
-    conn.commit()
-    messagebox.showinfo("Éxito", "Contraseña actualizada")
+    if not contrasenyaNueva:
+        messagebox.showerror("Error", "La nueva contraseña no puede estar vacío.")
+    else:
+        cur.execute("UPDATE usuarios SET contrasenya=? WHERE nick=?", (contrasenyaNueva, nick))
+        conn.commit()
+        messagebox.showinfo("Éxito", "Contraseña actualizada")
 
 
 # Función para eliminar un usuario
@@ -163,10 +172,13 @@ def mostrarFrameIngreso():
 
 # Función para registrar un nuevo usuario
 def registrarUsuario(nick, contrasenya, avatar):
-    cur.execute("INSERT INTO usuarios (nick, contrasenya, avatar) VALUES (?, ?, ?)", (nick, contrasenya, avatar))
-    conn.commit()
-    print(f"Usuario registrado: {nick}")
-    messagebox.showinfo("Éxito", "Usuario registrado con éxito")
+    if not nick or not contrasenya or not  avatar:
+        messagebox.showerror("Error", "Todos los campos son obligatorios.")
+    else:
+        cur.execute("INSERT INTO usuarios (nick, contrasenya, avatar) VALUES (?, ?, ?)", (nick, contrasenya, avatar))
+        conn.commit()
+        print(f"Usuario registrado: {nick}")
+        messagebox.showinfo("Éxito", "Usuario registrado con éxito")
 
 
 # Función para abrir la ventana de registro
@@ -188,7 +200,7 @@ def abrirVentanaRegistro():
 
     etiquetaAvatar = tk.Label(ventanaRegistro, text="Avatar:")
     etiquetaAvatar.grid(row=2, column=0)
-    botonSeleccionarAvatar = tk.Button(ventanaRegistro, text="Seleccionar Avatar", command=lambda: seleccionarAvatar(nuevoNick.get()))
+    botonSeleccionarAvatar = tk.Button(ventanaRegistro, text="Seleccionar Avatar", command=lambda: seleccionarAvatar(nuevoNick.get(), ventanaRegistro))
     botonSeleccionarAvatar.grid(row=2, column=1)
 
     botonRegistrar = tk.Button(ventanaRegistro, text="Registrar", command=lambda: registrarUsuario(nuevoNick.get(), nuevaContrasenya.get(), nuevoAvatar.get()))
