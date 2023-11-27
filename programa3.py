@@ -137,16 +137,22 @@ def abrirImagenMod(nick):
 
 # Función para actualizar el nick de un usuario
 def actualizarNick(nickViejo, nickNuevo):
-    cur.execute("UPDATE usuarios SET nick=? WHERE nick=?", (nickNuevo, nickViejo))
-    conn.commit()
-    messagebox.showinfo("Éxito", f"Nick actualizado a: {nickNuevo}")
+    if nickNuevo.strip() != "":
+        cur.execute("UPDATE usuarios SET nick=? WHERE nick=?", (nickNuevo, nickViejo))
+        conn.commit()
+        messagebox.showinfo("Éxito", f"Nick actualizado a: {nickNuevo}")
+    else:
+        messagebox.showerror("Error", "El nuevo nick no puede estar vacío.")
 
 
 # Función para actualizar la contraseña de un usuario
 def actualizarContrasenya(nick, contrasenyaNueva):
-    cur.execute("UPDATE usuarios SET contrasenya=? WHERE nick=?", (contrasenyaNueva, nick))
-    conn.commit()
-    messagebox.showinfo("Éxito", "Contraseña actualizada")
+    if contrasenyaNueva.strip() != "":
+        cur.execute("UPDATE usuarios SET contrasenya=? WHERE nick=?", (contrasenyaNueva, nick))
+        conn.commit()
+        messagebox.showinfo("Éxito", "Contraseña actualizada")
+    else:
+        messagebox.showerror("Error", "La nueva contraseña no puede estar vacía.")
 
 
 # Función para eliminar un usuario
