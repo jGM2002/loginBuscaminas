@@ -132,6 +132,7 @@ def abrirImagenMod(nick):
         cur.execute("UPDATE usuarios SET avatar=? WHERE nick=?", (filePath, nick))
         conn.commit()
         cargarAvatar(nick, etiquetaAvatar)
+        messagebox.showinfo("Éxito", "Imagen cargada correctamente")
 
 
 # Función para actualizar el nick de un usuario
