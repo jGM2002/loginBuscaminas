@@ -30,6 +30,7 @@ def abrirImagen():
         etiquetaAvatar.image = imagen
         etiquetaAvatar.configure(image=imagen)
         etiquetaAvatar.filePath = filePath
+        messagebox.showinfo("Éxito", "Imagen cargada correctamente")
 
 
 # Función para seleccionar un avatar
