@@ -130,7 +130,7 @@ def abrirImagenMod(nick):
     if filePath:
         cur.execute("UPDATE usuarios SET avatar=? WHERE nick=?", (filePath, nick))
         conn.commit()
-        cargarAvatar(nick)
+        cargarAvatar(nick, etiquetaAvatar)
 
 
 # Función para actualizar el nick de un usuario
@@ -202,7 +202,10 @@ def comprobarInicioPartida():
     else:
         autenticarUsuario(frameJugador1, frameJugador1.nick.get(), frameJugador1.contrasenya.get())
         autenticarUsuario(frameJugador2, frameJugador2.nick.get(), frameJugador2.contrasenya.get())
-        programa2.iniciarPartida()
+
+        root = tk.Tk()
+        game = programa2.Buscaminas(root)
+        root.mainloop()
 
 
 ventanaPrincipal = tk.Tk()
