@@ -59,6 +59,7 @@ def autenticarUsuario(frame, nick, contrasenya):
     result = cur.fetchone()
     if result:
         frame.destroy()
+        jugadores_autenticados.append(result)
         if not frameUsuario1.winfo_ismapped():
             mostrarInformacionUsuario(result, 0, 0)
         else:
@@ -71,6 +72,7 @@ def autenticarUsuario(frame, nick, contrasenya):
             ventanaPrincipal.quit()
 
 
+jugadores_autenticados = []
 # Función para mostrar la información de un usuario en una ventana
 def mostrarInformacionUsuario(usuario, row, col):
     id, nick, contrasenya, avatar, partides_jugades, partides_guanyades = usuario
@@ -211,9 +213,36 @@ def comprobarInicioPartida():
         autenticarUsuario(frameJugador1, frameJugador1.nick.get(), frameJugador1.contrasenya.get())
         autenticarUsuario(frameJugador2, frameJugador2.nick.get(), frameJugador2.contrasenya.get())
 
-        root = tk.Tk()
-        game = programa2.Buscaminas(root)
-        root.mainloop()
+        jugador_seleccionado = seleccionarJugador()
+
+        if jugador_seleccionado is not None:
+            root = tk.Tk()
+            game = programa2.Buscaminas(root, cur, jugador_seleccionado, conn)
+            root.mainloop()
+
+
+ventanaSeleccion = None
+
+def cerrarVentana(ventana, valor):
+    ventana.return_value = valor
+    ventana.destroy()
+
+
+def seleccionarJugador():
+    global ventanaSeleccion
+    ventanaSeleccion = tk.Toplevel(ventanaPrincipal)
+    ventanaSeleccion.title("Seleccionar Jugador")
+
+    etiquetaSeleccion = tk.Label(ventanaSeleccion, text="Selecciona el jugador que jugará la partida:")
+    etiquetaSeleccion.pack()
+
+    for jugador in jugadores_autenticados:
+        id, nick, _, _, _, _ = jugador
+        botonJugador = tk.Button(ventanaSeleccion, text=f"jugador {nick}", command=lambda j=id: cerrarVentana(ventanaSeleccion, j))
+        botonJugador.pack()
+
+    ventanaSeleccion.wait_window()
+    return ventanaSeleccion.return_value
 
 
 ventanaPrincipal = tk.Tk()

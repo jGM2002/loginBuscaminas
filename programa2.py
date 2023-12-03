@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import time
+import sqlite3
 
 class Buscaminas:
-    def __init__(self, master):
+    def __init__(self, master, cursor, jugador_actual, conn):
         self.master = master
         self.master.title("Buscaminas")
 
@@ -21,6 +22,10 @@ class Buscaminas:
 
         self.turno = 1
         self.start_time = None
+        self.last_clicked = None
+        self.conn = conn
+        self.cursor = cursor
+        self.jugador_actual = jugador_actual
 
         self.indicador_turno = tk.Label(self.master, text="Jugador 1", font=("Arial", 14))
         self.indicador_turno.grid(row=self.rows, columnspan=self.cols)
@@ -105,7 +110,18 @@ class Buscaminas:
                     self.buttons[i][j].config(state=tk.DISABLED)
         elapsed_time = time.time() - self.start_time
         messagebox.showinfo("Partida finalizada", f"Jugador {self.turno} ha perdido. ¡Inténtalo de nuevo!\nTiempo: {elapsed_time:.2f} segundos")
-        self.reset_game()
+
+        if self.last_clicked:
+            row, col = self.last_clicked
+            self.cursor.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE id=?",
+                                (self.jugador_actual,))
+
+            if self.board[row][col] != "M":
+                self.cursor.execute("UPDATE usuarios SET partides_guanyades = partides_guanyades + 1 WHERE id=?",
+                                    (self.jugador_actual,))
+
+            self.conn.commit()
+            self.reset_game()
 
     def reset_game(self):
         self.start_time = time.time()
@@ -137,6 +153,5 @@ class Buscaminas:
         self.master.after(100, self.update_cronometro)
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    game = Buscaminas(root)
-    root.mainloop()
+    conn = sqlite3.connect("usuarios.db")
+    cur = conn.cursor()
