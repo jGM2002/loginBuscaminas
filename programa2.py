@@ -11,7 +11,7 @@ cur = conn.cursor()
 class Buscaminas:
     def __init__(self, master, jugador_actual):
         self.master = master
-        self.master.title("Buscaminas")
+        self.master.title(f"Buscaminas - Jugador: {jugador_actual}")
 
         self.rows = 6
         self.cols = 7
@@ -31,9 +31,9 @@ class Buscaminas:
         self.last_clicked = None
         self.jugador_actual = jugador_actual
 
-        self.indicador_turno = tk.Label(self.master, text=jugador_actual, font=("Arial", 14))
+        self.indicador_turno = tk.Label(self.master, text=f'Turno del Jugador: {self.jugador_actual}', font=("Arial", 14))
         self.indicador_turno.grid(row=self.rows, columnspan=self.cols)
-        self.contador_turno_label = tk.Label(self.master, text="Turno:", font=("Arial", 14))
+        self.contador_turno_label = tk.Label(self.master, text="Turno: 1", font=("Arial", 14))
         self.contador_turno_label.grid(row=self.rows + 1, columnspan=self.cols)
 
         self.cronometro_label = tk.Label(self.master, text="Tiempo: 0s", font=("Arial", 14))
@@ -137,12 +137,16 @@ class Buscaminas:
         self.calculate_numbers()
         self.update_indicador_turno()
 
-        self.cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?",
-                         (self.jugador_actual,))
-        self.conn.commit()
+        try:
+            self.cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?",
+                             (self.jugador_actual,))
+            self.conn.commit()
+            print("Partidas jugadas actualizadas correctamente.")
+        except Exception as e:
+            print(f"Error al actualizar partidas jugadas: {e}")
 
     def contador_turno(self):
-        self.turno = self.turno + 1
+        self.turno += 1
         self.contador_turno_label.config(text=f"Turno: {self.turno}")
         self.update_indicador_turno()
 
@@ -161,4 +165,6 @@ class Buscaminas:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    jugador_seleccionado = "nombre_del_jugador"  # Reemplaza con el nombre del jugador seleccionado
+    game = Buscaminas(root, jugador_seleccionado)
     root.mainloop()

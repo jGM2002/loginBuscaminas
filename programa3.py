@@ -73,6 +73,8 @@ def autenticarUsuario(frame, nick, contrasenya):
 
 
 jugadores_autenticados = []
+
+
 # Función para mostrar la información de un usuario en una ventana
 def mostrarInformacionUsuario(usuario, row, col):
     id, nick, contrasenya, avatar, partides_jugades, partides_guanyades = usuario
@@ -174,7 +176,7 @@ def mostrarFrameIngreso():
 
 # Función para registrar un nuevo usuario
 def registrarUsuario(nick, contrasenya, avatar):
-    cur.execute("INSERT INTO usuarios (nick, contrasenya, avatar) VALUES (?, ?, ?)", (nick, contrasenya, avatar))
+    cur.execute("INSERT INTO usuarios (nick, contrasenya, avatar, partides_jugades, partides_guanyades) VALUES (?, ?, ?, ?, ?)", (nick, contrasenya, avatar, 0, 0))
     conn.commit()
     messagebox.showinfo("Éxito", "Usuario registrado con éxito")
 
@@ -213,17 +215,19 @@ def comprobarInicioPartida():
         autenticarUsuario(frameJugador1, frameJugador1.nick.get(), frameJugador1.contrasenya.get())
         autenticarUsuario(frameJugador2, frameJugador2.nick.get(), frameJugador2.contrasenya.get())
 
-        jugador_seleccionado = seleccionarJugador()
+        jugador_seleccionado = seleccionarJugador(jugadores_autenticados)
 
         if jugador_seleccionado is not None:
-            cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?", (jugador_seleccionado,))
-            conn.commit()
+            try:
+                cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?",
+                                 (jugador_seleccionado,))
+                conn.commit()
+                print("Partidas jugadas actualizadas correctamente.")
+            except Exception as e:
+                print(f"Error al actualizar partidas jugadas: {e}")
             root = tk.Tk()
             game = programa2.Buscaminas(root, jugador_seleccionado)
             root.mainloop()
-
-
-ventanaSeleccion = None
 
 
 def cerrarVentana(ventana, valor):
@@ -231,21 +235,26 @@ def cerrarVentana(ventana, valor):
     ventana.destroy()
 
 
-def seleccionarJugador():
-    global ventanaSeleccion
+# En lugar de utilizar una variable global, pasa la lista de jugadores autenticados como parámetro a la función
+def seleccionarJugador(jugadores_autenticados):
     ventanaSeleccion = tk.Toplevel(ventanaPrincipal)
     ventanaSeleccion.title("Seleccionar Jugador")
 
     etiquetaSeleccion = tk.Label(ventanaSeleccion, text="Selecciona el jugador que jugará la partida:")
     etiquetaSeleccion.pack()
 
+    jugador_seleccionado = tk.StringVar()
+
     for jugador in jugadores_autenticados:
         id, nick, _, _, _, _ = jugador
-        botonJugador = tk.Button(ventanaSeleccion, text=f"jugador {nick}", command=lambda j=id: cerrarVentana(ventanaSeleccion, j))
+        botonJugador = tk.Button(ventanaSeleccion, text=f"jugador {nick}", command=lambda j=nick: jugador_seleccionado.set(j))
         botonJugador.pack()
 
+    botonConfirmar = tk.Button(ventanaSeleccion, text="Confirmar", command=lambda: ventanaSeleccion.destroy())
+    botonConfirmar.pack()
+
     ventanaSeleccion.wait_window()
-    return ventanaSeleccion.return_value
+    return jugador_seleccionado.get()
 
 
 ventanaPrincipal = tk.Tk()
