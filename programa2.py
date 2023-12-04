@@ -31,9 +31,9 @@ class Buscaminas:
         self.last_clicked = None
         self.jugador_actual = jugador_actual
 
-        self.indicador_turno = tk.Label(self.master, text="Jugador 1", font=("Arial", 14))
+        self.indicador_turno = tk.Label(self.master, text=jugador_actual, font=("Arial", 14))
         self.indicador_turno.grid(row=self.rows, columnspan=self.cols)
-        self.contador_turno_label = tk.Label(self.master, text="Turno: 1", font=("Arial", 14))
+        self.contador_turno_label = tk.Label(self.master, text="Turno:", font=("Arial", 14))
         self.contador_turno_label.grid(row=self.rows + 1, columnspan=self.cols)
 
         self.cronometro_label = tk.Label(self.master, text="Tiempo: 0s", font=("Arial", 14))
@@ -113,16 +113,17 @@ class Buscaminas:
                 else:
                     self.buttons[i][j].config(state=tk.DISABLED)
         elapsed_time = time.time() - self.start_time
-        messagebox.showinfo("Partida finalizada", f"Jugador {self.jugador_actual} ha perdido. ¡Inténtalo de nuevo!\nTiempo: {elapsed_time:.2f} segundos")
+        messagebox.showinfo("Partida finalizada",
+                            f"Jugador {self.jugador_actual} ha perdido. ¡Inténtalo de nuevo!\nTiempo: {elapsed_time:.2f} segundos")
         self.reset_game()
-
 
     def game_win(self):
         elapsed_time = time.time() - self.start_time
-        messagebox.showinfo("Felicidades", f"¡Jugador {self.jugador_actual} ha ganado!\nTiempo: {elapsed_time: .2f} segundos")
-        self.cur.execute("UPDATE usuarios SET partides_guanyades = partides_guanyades + 1 WHERE nick=?", (self.jugador_actual, ))
+        messagebox.showinfo("Felicidades",
+                            f"¡Jugador {self.jugador_actual} ha ganado!\nTiempo: {elapsed_time: .2f} segundos")
+        self.cur.execute("UPDATE usuarios SET partides_guanyades = partides_guanyades + 1 WHERE nick=?",
+                         (self.jugador_actual,))
         self.conn.commit()
-
 
     def reset_game(self):
         self.start_time = time.time()
@@ -136,16 +137,17 @@ class Buscaminas:
         self.calculate_numbers()
         self.update_indicador_turno()
 
-        self.cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?", (self.jugador_actual,))
+        self.cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?",
+                         (self.jugador_actual,))
         self.conn.commit()
 
     def contador_turno(self):
-        self.turno = 3 - self.turno
+        self.turno = self.turno + 1
         self.contador_turno_label.config(text=f"Turno: {self.turno}")
         self.update_indicador_turno()
 
     def update_indicador_turno(self):
-        jugador = f"Jugador {self.turno}"
+        jugador = f"Jugador: {self.jugador_actual}"
         self.indicador_turno.config(text=jugador)
 
     def cerrar_programa(self):
