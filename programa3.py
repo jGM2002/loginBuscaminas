@@ -216,12 +216,15 @@ def comprobarInicioPartida():
         jugador_seleccionado = seleccionarJugador()
 
         if jugador_seleccionado is not None:
+            cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?", (jugador_seleccionado,))
+            conn.commit()
             root = tk.Tk()
-            game = programa2.Buscaminas(root, cur, jugador_seleccionado, conn)
+            game = programa2.Buscaminas(root, jugador_seleccionado)
             root.mainloop()
 
 
 ventanaSeleccion = None
+
 
 def cerrarVentana(ventana, valor):
     ventana.return_value = valor

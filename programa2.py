@@ -4,8 +4,12 @@ import random
 import time
 import sqlite3
 
+conn = sqlite3.connect("usuarios.db")
+cur = conn.cursor()
+
+
 class Buscaminas:
-    def __init__(self, master, cursor, jugador_actual, conn):
+    def __init__(self, master, jugador_actual):
         self.master = master
         self.master.title("Buscaminas")
 
@@ -16,6 +20,8 @@ class Buscaminas:
         self.flags = [[False] * self.cols for _ in range(self.rows)]
         self.generate_mines()
         self.calculate_numbers()
+        self.cur = cur
+        self.conn = conn
 
         self.buttons = [[None] * self.cols for _ in range(self.rows)]
         self.create_widgets()
@@ -23,8 +29,6 @@ class Buscaminas:
         self.turno = 1
         self.start_time = None
         self.last_clicked = None
-        self.conn = conn
-        self.cursor = cursor
         self.jugador_actual = jugador_actual
 
         self.indicador_turno = tk.Label(self.master, text="Jugador 1", font=("Arial", 14))
@@ -109,19 +113,16 @@ class Buscaminas:
                 else:
                     self.buttons[i][j].config(state=tk.DISABLED)
         elapsed_time = time.time() - self.start_time
-        messagebox.showinfo("Partida finalizada", f"Jugador {self.turno} ha perdido. ¡Inténtalo de nuevo!\nTiempo: {elapsed_time:.2f} segundos")
+        messagebox.showinfo("Partida finalizada", f"Jugador {self.jugador_actual} ha perdido. ¡Inténtalo de nuevo!\nTiempo: {elapsed_time:.2f} segundos")
+        self.reset_game()
 
-        if self.last_clicked:
-            row, col = self.last_clicked
-            self.cursor.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE id=?",
-                                (self.jugador_actual,))
 
-            if self.board[row][col] != "M":
-                self.cursor.execute("UPDATE usuarios SET partides_guanyades = partides_guanyades + 1 WHERE id=?",
-                                    (self.jugador_actual,))
+    def game_win(self):
+        elapsed_time = time.time() - self.start_time
+        messagebox.showinfo("Felicidades", f"¡Jugador {self.jugador_actual} ha ganado!\nTiempo: {elapsed_time: .2f} segundos")
+        self.cur.execute("UPDATE usuarios SET partides_guanyades = partides_guanyades + 1 WHERE nick=?", (self.jugador_actual, ))
+        self.conn.commit()
 
-            self.conn.commit()
-            self.reset_game()
 
     def reset_game(self):
         self.start_time = time.time()
@@ -135,8 +136,11 @@ class Buscaminas:
         self.calculate_numbers()
         self.update_indicador_turno()
 
+        self.cur.execute("UPDATE usuarios SET partides_jugades = partides_jugades + 1 WHERE nick=?", (self.jugador_actual,))
+        self.conn.commit()
+
     def contador_turno(self):
-        self.turno = 3 - self.turno  # Alternar entre 1 y 2
+        self.turno = 3 - self.turno
         self.contador_turno_label.config(text=f"Turno: {self.turno}")
         self.update_indicador_turno()
 
@@ -152,6 +156,7 @@ class Buscaminas:
         self.cronometro_label.config(text=f"Tiempo: {elapsed_time:.2f} segundos")
         self.master.after(100, self.update_cronometro)
 
+
 if __name__ == "__main__":
-    conn = sqlite3.connect("usuarios.db")
-    cur = conn.cursor()
+    root = tk.Tk()
+    root.mainloop()
