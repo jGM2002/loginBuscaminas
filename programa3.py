@@ -79,21 +79,22 @@ jugadores_autenticados = []
 def mostrarInformacionUsuario(usuario, row, col):
     id, nick, contrasenya, avatar, partides_jugades, partides_guanyades = usuario
     frameInfo = tk.Toplevel(ventanaPrincipal)
+    frameInfo.configure(bg="#87CEEB")
 
-    etiquetaNick = tk.Label(frameInfo, text=f'Nick: {nick}')
+    etiquetaNick = tk.Label(frameInfo, text=f'Nick: {nick}', bg="#87CEEB", fg="white")
     etiquetaNick.grid(row=row, column=col, padx=10, pady=10)
-    etiquetaPartides = tk.Label(frameInfo, text=f'Partidas Jugadas: {partides_jugades}')
+    etiquetaPartides = tk.Label(frameInfo, text=f'Partidas Jugadas: {partides_jugades}', bg="#87CEEB", fg="white")
     etiquetaPartides.grid(row=row + 1, column=col, padx=10, pady=10)
-    etiquetaGuanyades = tk.Label(frameInfo, text=f'Partidas Ganadas: {partides_guanyades}')
+    etiquetaGuanyades = tk.Label(frameInfo, text=f'Partidas Ganadas: {partides_guanyades}', bg="#87CEEB", fg="white")
     etiquetaGuanyades.grid(row=row + 2, column=col, padx=10, pady=10)
 
-    imagenAvatar = tk.Label(frameInfo)
+    imagenAvatar = tk.Label(frameInfo, bg="#87CEEB")
     imagenAvatar.grid(row=3, column=0, pady=10, padx=10)
 
-    botonMod = tk.Button(frameInfo, text="Modificar", command=lambda nick=nick: abrirSubfinestraModificar(nick))
+    botonMod = tk.Button(frameInfo, text="Modificar", command=lambda nick=nick: abrirSubfinestraModificar(nick), bg="#87CEEB", fg="white")
     botonMod.grid(row=4, column=2, padx=10, pady=10)
 
-    botonEliminarUsuario = tk.Button(frameInfo, text="Eliminar usuario", command=lambda nick=nick: eliminarUsuario(nick))
+    botonEliminarUsuario = tk.Button(frameInfo, text="Eliminar usuario", command=lambda nick=nick: eliminarUsuario(nick), bg="#87CEEB", fg="white")
     botonEliminarUsuario.grid(row=5, column=2, pady=10, padx=10)
 
     cargarAvatar(nick, imagenAvatar)
@@ -103,20 +104,21 @@ def mostrarInformacionUsuario(usuario, row, col):
 def abrirSubfinestraModificar(nick):
     subventana = tk.Toplevel(ventanaPrincipal)
     subventana.title(f'Modificar Usuario: {nick}')
-    etiquetaNickMod = tk.Label(subventana, text='Nuevo Nick:')
+    subventana.configure(bg="#87CEEB")
+    etiquetaNickMod = tk.Label(subventana, text='Nuevo Nick:', bg="#87CEEB", fg="white")
     etiquetaNickMod.grid(row=0, column=0)
     nuevaNickMod = tk.StringVar()
     entradaNickMod = tk.Entry(subventana, textvariable=nuevaNickMod)
     entradaNickMod.grid(row=0, column=1)
     entradaNickMod.insert(0, nick)
 
-    etiquetaContrasenyaMod = tk.Label(subventana, text='Nueva Contraseña:')
+    etiquetaContrasenyaMod = tk.Label(subventana, text='Nueva Contraseña:', bg="#87CEEB", fg="white")
     etiquetaContrasenyaMod.grid(row=1, column=0)
     nuevaContrasenyaMod = tk.StringVar()
     entradaContrasenyaMod = tk.Entry(subventana, textvariable=nuevaContrasenyaMod, show='*')
     entradaContrasenyaMod.grid(row=1, column=1)
 
-    etiquetaAvatarMod = tk.Label(subventana, text='Cambiar Avatar:')
+    etiquetaAvatarMod = tk.Label(subventana, text='Cambiar Avatar:', bg="#87CEEB", fg="white")
     etiquetaAvatarMod.grid(row=2, column=0)
     botonSeleccionarMod = tk.Button(subventana, text='Seleccionar Imagen', command=lambda: abrirImagenMod(nuevaNickMod.get()))
     botonSeleccionarMod.grid(row=2, column=1)
@@ -185,20 +187,21 @@ def registrarUsuario(nick, contrasenya, avatar):
 def abrirVentanaRegistro():
     ventanaRegistro = tk.Toplevel(ventanaPrincipal)
     ventanaRegistro.title("Registro de Usuario")
+    ventanaRegistro.configure(bg="#87CEEB")
 
-    etiquetaNuevoNick = tk.Label(ventanaRegistro, text="Nuevo Nick:")
+    etiquetaNuevoNick = tk.Label(ventanaRegistro, text="Nuevo Nick:", bg="#87CEEB", fg="white")
     etiquetaNuevoNick.grid(row=0, column=0)
     nuevoNick = tk.StringVar()
     entradaNuevoNick = tk.Entry(ventanaRegistro, textvariable=nuevoNick)
     entradaNuevoNick.grid(row=0, column=1)
 
-    etiquetaNuevaContrasenya = tk.Label(ventanaRegistro, text="Nueva Contraseña:")
+    etiquetaNuevaContrasenya = tk.Label(ventanaRegistro, text="Nueva Contraseña:", bg="#87CEEB", fg="white")
     etiquetaNuevaContrasenya.grid(row=1, column=0)
     nuevaContrasenya = tk.StringVar()
     entradaNuevaContrasenya = tk.Entry(ventanaRegistro, textvariable=nuevaContrasenya, show="*")
     entradaNuevaContrasenya.grid(row=1, column=1)
 
-    etiquetaAvatar = tk.Label(ventanaRegistro, text="Avatar:")
+    etiquetaAvatar = tk.Label(ventanaRegistro, text="Avatar:", bg="#87CEEB", fg="white")
     etiquetaAvatar.grid(row=2, column=0)
     botonSeleccionarAvatar = tk.Button(ventanaRegistro, text="Seleccionar Avatar", command=lambda: seleccionarAvatar(nuevoNick.get()))
     botonSeleccionarAvatar.grid(row=2, column=1)
@@ -239,8 +242,9 @@ def cerrarVentana(ventana, valor):
 def seleccionarJugador(jugadores_autenticados):
     ventanaSeleccion = tk.Toplevel(ventanaPrincipal)
     ventanaSeleccion.title("Seleccionar Jugador")
+    ventanaSeleccion.configure(bg="#87CEEB")
 
-    etiquetaSeleccion = tk.Label(ventanaSeleccion, text="Selecciona el jugador que jugará la partida:")
+    etiquetaSeleccion = tk.Label(ventanaSeleccion, text="Selecciona el jugador que jugará la partida:", bg="#87CEEB", fg="white")
     etiquetaSeleccion.pack()
 
     jugador_seleccionado = tk.StringVar()
@@ -259,46 +263,47 @@ def seleccionarJugador(jugadores_autenticados):
 
 ventanaPrincipal = tk.Tk()
 ventanaPrincipal.title("Juegos de Mesa con Usuarios")
+ventanaPrincipal.configure(bg="#9370DB")
 
-frameUsuario1 = tk.Frame(ventanaPrincipal)
-frameUsuario2 = tk.Frame(ventanaPrincipal)
+frameUsuario1 = tk.Frame(ventanaPrincipal, bg="#9370DB")
+frameUsuario2 = tk.Frame(ventanaPrincipal, bg="#9370DB")
 
 frameUsuario1.grid(row=0, column=0, padx=10, pady=10)
 frameUsuario2.grid(row=0, column=1, padx=10, pady=10)
 
-frameIngreso = tk.Frame(ventanaPrincipal)
+frameIngreso = tk.Frame(ventanaPrincipal, bg="#9370DB")
 frameIngreso.grid(row=0, column=0, padx=10, pady=10)
 
-frameJugador1 = tk.Frame(frameIngreso)
-frameJugador2 = tk.Frame(frameIngreso)
+frameJugador1 = tk.Frame(frameIngreso, bg="#9370DB")
+frameJugador2 = tk.Frame(frameIngreso, bg="#9370DB")
 
 frameJugador1.grid(row=0, column=0, padx=10, pady=10)
 frameJugador2.grid(row=0, column=1, padx=10, pady=10)
 
 intentos = 0
 
-etiquetaNick1 = tk.Label(frameJugador1, text="Nick:")
+etiquetaNick1 = tk.Label(frameJugador1, text="Nick:", bg="#9370DB", fg="white")
 etiquetaNick1.grid(row=0, column=0)
 frameJugador1.nick = tk.StringVar()
-entradaNick1 = tk.Entry(frameJugador1, textvariable=frameJugador1.nick)
+entradaNick1 = tk.Entry(frameJugador1, textvariable=frameJugador1.nick, bg="#9370DB", fg="white")
 entradaNick1.grid(row=0, column=1)
 
-etiquetaContrasenya1 = tk.Label(frameJugador1, text="Contraseña:")
+etiquetaContrasenya1 = tk.Label(frameJugador1, text="Contraseña:", bg="#9370DB", fg="white")
 etiquetaContrasenya1.grid(row=1, column=0)
 frameJugador1.contrasenya = tk.StringVar()
-entradaContrasenya1 = tk.Entry(frameJugador1, textvariable=frameJugador1.contrasenya, show="*")
+entradaContrasenya1 = tk.Entry(frameJugador1, textvariable=frameJugador1.contrasenya, show="*", bg="#9370DB", fg="white")
 entradaContrasenya1.grid(row=1, column=1)
 
-etiquetaNick2 = tk.Label(frameJugador2, text="Nick:")
+etiquetaNick2 = tk.Label(frameJugador2, text="Nick:", bg="#9370DB", fg="white")
 etiquetaNick2.grid(row=0, column=0)
 frameJugador2.nick = tk.StringVar()
-entradaNick2 = tk.Entry(frameJugador2, textvariable=frameJugador2.nick)
+entradaNick2 = tk.Entry(frameJugador2, textvariable=frameJugador2.nick, bg="#9370DB", fg="white")
 entradaNick2.grid(row=0, column=1)
 
-etiquetaContrasenya2 = tk.Label(frameJugador2, text="Contraseña:")
+etiquetaContrasenya2 = tk.Label(frameJugador2, text="Contraseña:", bg="#9370DB", fg="white")
 etiquetaContrasenya2.grid(row=1, column=0)
 frameJugador2.contrasenya = tk.StringVar()
-entradaContrasenya2 = tk.Entry(frameJugador2, textvariable=frameJugador2.contrasenya, show="*")
+entradaContrasenya2 = tk.Entry(frameJugador2, textvariable=frameJugador2.contrasenya, show="*", bg="#9370DB", fg="white")
 entradaContrasenya2.grid(row=1, column=1)
 
 etiquetaAvatar = tk.Label(ventanaPrincipal, image=None)
